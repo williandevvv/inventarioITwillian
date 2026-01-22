@@ -33,11 +33,12 @@ const loadInitialData = () => {
 };
 
 const handleLogin = (payload) => {
+  const derivedName = payload.email?.split("@")[0] || "Operador";
   const user = {
     uid: "demo-1",
-    name: payload.name || "Operador Demo",
+    name: derivedName,
     email: payload.email,
-    role: payload.role
+    role: "operador"
   };
   setState({ user, view: "inventory" });
 };
