@@ -673,7 +673,15 @@ const bindUIEvents = () => {
   });
 };
 
-const init = () => {
+const init = async () => {
+  await dataService.init();
+  dataService.subscribe((snapshot) => {
+    setState({
+      tools: snapshot.tools,
+      locations: snapshot.locations,
+      movements: snapshot.movements
+    });
+  });
   loadInitialData();
   restoreSession();
   render();

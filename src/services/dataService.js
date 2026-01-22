@@ -1,6 +1,12 @@
-import { saveToolToFirebase } from "./firebase.js";
-
-const STORAGE_KEY = "it_inventory_data_v1";
+import {
+  collection,
+  deleteDoc,
+  doc,
+  firestoreDb,
+  onSnapshot,
+  saveToolToFirebase,
+  setDoc
+} from "./firebase.js";
 
 const seedData = {
   tools: [
@@ -82,33 +88,76 @@ const seedData = {
   ]
 };
 
-const loadState = () => {
-  const raw = localStorage.getItem(STORAGE_KEY);
-  if (!raw) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(seedData));
-    return structuredClone(seedData);
-  }
-  return JSON.parse(raw);
+const localState = {
+  tools: structuredClone(seedData.tools),
+  locations: structuredClone(seedData.locations),
+  movements: structuredClone(seedData.movements)
 };
 
-const saveState = (state) => {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+const subscribers = new Set();
+
+const notifySubscribers = () => {
+  const snapshot = getState();
+  subscribers.forEach((callback) => callback(snapshot));
 };
 
-const getState = () => {
-  if (!window.__inventoryState) {
-    window.__inventoryState = loadState();
-  }
-  return window.__inventoryState;
-};
+const getState = () => localState;
 
 const updateState = (partial) => {
-  const current = getState();
-  window.__inventoryState = { ...current, ...partial };
-  saveState(window.__inventoryState);
+  Object.assign(localState, partial);
+  notifySubscribers();
+};
+
+const normalizeSnapshot = (docs) =>
+  docs.map((docItem) => ({
+    ...docItem.data(),
+    id: docItem.id
+  }));
+
+const watchCollection = (path, onUpdate) =>
+  onSnapshot(collection(firestoreDb, path), (snapshot) => {
+    onUpdate(normalizeSnapshot(snapshot.docs));
+  });
+
+const startFirebaseSync = () => {
+  if (startFirebaseSync.started) return;
+  startFirebaseSync.started = true;
+
+  watchCollection("tools", (tools) => updateState({ tools }));
+  watchCollection("locations", (locations) => updateState({ locations }));
+  watchCollection("movements", (movements) => updateState({ movements }));
+};
+
+const bootstrapCollection = async (path, items) => {
+  const ref = collection(firestoreDb, path);
+  const existing = await new Promise((resolve) => {
+    const unsubscribe = onSnapshot(ref, (snapshot) => {
+      unsubscribe();
+      resolve(snapshot.docs.length);
+    });
+  });
+
+  if (existing > 0) return;
+
+  await Promise.all(
+    items.map((item) => {
+      if (!item?.id) return Promise.resolve();
+      return setDoc(doc(firestoreDb, path, item.id), item, { merge: true });
+    })
+  );
+};
+
+const ensureSeedData = async () => {
+  await bootstrapCollection("locations", seedData.locations);
+  await bootstrapCollection("tools", seedData.tools);
+  await bootstrapCollection("movements", seedData.movements);
 };
 
 export const dataService = {
+  async init() {
+    await ensureSeedData();
+    startFirebaseSync();
+  },
   getTools() {
     return getState().tools;
   },
@@ -118,38 +167,63 @@ export const dataService = {
   getMovements() {
     return getState().movements;
   },
+  subscribe(callback) {
+    subscribers.add(callback);
+    callback(getState());
+    return () => subscribers.delete(callback);
+  },
   addMovement(movement) {
-    const state = getState();
-    const updated = [...state.movements, movement];
-    updateState({ movements: updated });
+    updateState({ movements: [...getState().movements, movement] });
+    if (movement?.id) {
+      setDoc(doc(firestoreDb, "movements", movement.id), movement, { merge: true }).catch((error) => {
+        console.error("No se pudo guardar el movimiento en Firebase.", error);
+      });
+    }
   },
   updateTool(tool) {
-    const state = getState();
-    const updatedTools = state.tools.map((item) => (item.id === tool.id ? tool : item));
-    updateState({ tools: updatedTools });
+    updateState({
+      tools: getState().tools.map((item) => (item.id === tool.id ? tool : item))
+    });
+    saveToolToFirebase(tool).catch((error) => {
+      console.error("No se pudo actualizar la herramienta en Firebase.", error);
+    });
   },
   addTool(tool) {
-    const state = getState();
-    updateState({ tools: [...state.tools, tool] });
+    updateState({ tools: [...getState().tools, tool] });
     saveToolToFirebase(tool).catch((error) => {
       console.error("No se pudo guardar la herramienta en Firebase.", error);
     });
   },
   addLocation(location) {
-    const state = getState();
-    updateState({ locations: [...state.locations, location] });
+    updateState({ locations: [...getState().locations, location] });
+    if (location?.id) {
+      setDoc(doc(firestoreDb, "locations", location.id), location, { merge: true }).catch((error) => {
+        console.error("No se pudo guardar la ubicación en Firebase.", error);
+      });
+    }
   },
   updateLocation(location) {
-    const state = getState();
-    const updated = state.locations.map((loc) => (loc.id === location.id ? location : loc));
-    updateState({ locations: updated });
+    updateState({
+      locations: getState().locations.map((loc) => (loc.id === location.id ? location : loc))
+    });
+    if (location?.id) {
+      setDoc(doc(firestoreDb, "locations", location.id), location, { merge: true }).catch((error) => {
+        console.error("No se pudo actualizar la ubicación en Firebase.", error);
+      });
+    }
   },
   deleteLocation(locationId) {
-    const state = getState();
-    updateState({ locations: state.locations.filter((loc) => loc.id !== locationId) });
+    updateState({
+      locations: getState().locations.filter((loc) => loc.id !== locationId)
+    });
+    deleteDoc(doc(firestoreDb, "locations", locationId)).catch((error) => {
+      console.error("No se pudo eliminar la ubicación en Firebase.", error);
+    });
   },
   deleteTool(toolId) {
-    const state = getState();
-    updateState({ tools: state.tools.filter((tool) => tool.id !== toolId) });
+    updateState({ tools: getState().tools.filter((tool) => tool.id !== toolId) });
+    deleteDoc(doc(firestoreDb, "tools", toolId)).catch((error) => {
+      console.error("No se pudo eliminar la herramienta en Firebase.", error);
+    });
   }
 };
