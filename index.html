@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Códigos QR SISTEMAWILL</title>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #eff6ff, #e0e7ff);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .main-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .card h2 {
+            font-size: 1.5rem;
+            color: #1f2937;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 10px;
+        }
+
+        .btn-grid-4 {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .btn-grid-2 {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .type-btn {
+            padding: 15px 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .type-btn:hover {
+            border-color: #3b82f6;
+        }
+
+        .type-btn.active {
+            border-color: #3b82f6;
+            background: #eff6ff;
+            color: #1d4ed8;
+        }
+
+        .type-btn .icon {
+            width: 20px;
+            height: 20px;
+            margin-bottom: 5px;
+        }
+
+        .type-btn .icon ion-icon,
+        .type-btn .social-icon ion-icon {
+            width: 100%;
+            height: 100%;
+        }
+
+        .type-btn .social-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+        }
+
+        .type-btn span {
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .inline-icon {
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+
+        .action-btn ion-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .input-field, .textarea-field, .select-field {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            transition: border-color 0.2s;
+        }
+
+        .input-field:focus, .textarea-field:focus, .select-field:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .textarea-field {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .color-input-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color-picker {
+            width: 48px;
+            height: 40px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .color-text {
+            flex: 1;
+        }
+
+        .range-input {
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: #e5e7eb;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.75rem;
+            color: #6b7280;
+            margin-top: 5px;
+        }
+
+        .preset-colors {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+
+        .preset-btn {
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: border-color 0.2s;
+            text-align: center;
+        }
+
+        .preset-btn:hover {
+            border-color: #9ca3af;
+        }
+
+        .preset-preview {
+            height: 30px;
+            border-radius: 4px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .preset-preview .dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 2px;
+        }
+
+        .preset-btn span {
+            font-size: 0.75rem;
+            color: #6b7280;
+        }
+
+        .whatsapp-config {
+            background: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .whatsapp-config h3 {
+            color: #166534;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .preview-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .canvas-container {
+            background: #f9fafb;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+
+        #qrCanvas {
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            image-rendering: pixelated;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .download-section {
+            width: 100%;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-secondary:hover {
+            background: #4b5563;
+        }
+
+        .btn-small {
+            padding: 8px 12px;
+            font-size: 0.8rem;
+        }
+
+        .format-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .btn-orange { background: #ea580c; }
+        .btn-orange:hover { background: #c2410c; }
+        .btn-green { background: #059669; }
+        .btn-green:hover { background: #047857; }
+        .btn-purple { background: #7c3aed; }
+        .btn-purple:hover { background: #6d28d9; }
+        .btn-red { background: #dc2626; }
+        .btn-red:hover { background: #b91c1c; }
+
+        .quality-section {
+            background: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+
+        .quality-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .quality-btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .quality-basic { background: #e5e7eb; color: #374151; }
+        .quality-basic:hover { background: #d1d5db; }
+        .quality-high { background: #dbeafe; color: #1d4ed8; }
+        .quality-high:hover { background: #bfdbfe; }
+        .quality-max { background: #dcfce7; color: #166534; }
+        .quality-max:hover { background: #bbf7d0; }
+
+        .iti {
+            width: 100%;
+        }
+
+        .qr-info {
+            width: 100%;
+            margin-top: 25px;
+            text-align: center;
+        }
+
+        .qr-info h3 {
+            color: #1f2937;
+            margin-bottom: 10px;
+        }
+
+        .info-box {
+            background: #f9fafb;
+            border-radius: 6px;
+            padding: 15px;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .info-box p {
+            margin-bottom: 5px;
+        }
+
+        .info-box strong {
+            color: #374151;
+        }
+
+        .history-section {
+            background: #f9fafb;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+
+        .history-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+        }
+
+        .history-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .history-content p {
+            margin: 0;
+            font-size: 0.85rem;
+        }
+
+        .history-title {
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .history-text {
+            color: #6b7280;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-date {
+            color: #9ca3af;
+            font-size: 0.75rem;
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 5px;
+        }
+
+        .action-btn {
+            padding: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .action-btn:hover {
+            background: #f3f4f6;
+        }
+
+        .guide-section {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .guide-item {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .guide-item h4 {
+            color: #1f2937;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        .guide-item p {
+            margin-bottom: 6px;
+        }
+
+        .guide-item strong {
+            color: #374151;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .btn-history {
+            background: #f3f4f6;
+            color: #374151;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-history:hover {
+            background: #e5e7eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Generador de Códigos QR SISTEMAWILL</h1>
+            <p>Crea códigos QR personalizados con historial y soporte completo para redes sociales</p>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Configuration Panel -->
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Configuración</h2>
+                    <button class="btn-history" onclick="toggleHistory()">
+                        <ion-icon class="inline-icon" name="albums-outline"></ion-icon>Historial (<span id="historyCount">0</span>)
+                    </button>
+                </div>
+
+                <!-- History Section -->
+                <div id="historySection" class="history-section hidden">
+                    <div class="history-header">
+                        <h3 style="color: #1f2937; margin: 0;">Historial de QR</h3>
+                        <button onclick="clearHistory()" style="color: #dc2626; background: none; border: none; cursor: pointer; font-size: 0.9rem;">
+                            <ion-icon class="inline-icon" name="trash-outline"></ion-icon>Limpiar todo
+                        </button>
+                    </div>
+                    <div id="historyList">
+                        <p style="text-align: center; color: #6b7280; padding: 20px;">No hay QR guardados aún</p>
+                    </div>
+                </div>
+
+                <!-- Basic Types -->
+                <div class="form-group">
+                    <label class="form-label">Tipos básicos</label>
+                    <div class="btn-grid btn-grid-4">
+                        <button class="type-btn active" data-type="url">
+                            <div class="icon"><ion-icon name="link-outline"></ion-icon></div>
+                            <span>URL</span>
+                        </button>
+                        <button class="type-btn" data-type="text">
+                            <div class="icon"><ion-icon name="document-text-outline"></ion-icon></div>
+                            <span>Texto</span>
+                        </button>
+                        <button class="type-btn" data-type="email">
+                            <div class="icon"><ion-icon name="mail-outline"></ion-icon></div>
+                            <span>Email</span>
+                        </button>
+                        <button class="type-btn" data-type="phone">
+                            <div class="icon"><ion-icon name="call-outline"></ion-icon></div>
+                            <span>Teléfono</span>
+                        </button>
+                        <button class="type-btn" data-type="sms">
+                            <div class="icon"><ion-icon name="chatbubble-outline"></ion-icon></div>
+                            <span>SMS</span>
+                        </button>
+                        <button class="type-btn" data-type="wifi">
+                            <div class="icon"><ion-icon name="wifi-outline"></ion-icon></div>
+                            <span>WiFi</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Social Networks -->
+                <div class="form-group">
+                    <label class="form-label">Redes sociales y mensajería</label>
+                    <div class="btn-grid btn-grid-4">
+                        <button class="type-btn" data-type="whatsapp">
+                            <div class="social-icon" style="background: #25d366;"><ion-icon name="logo-whatsapp"></ion-icon></div>
+                            <span>WhatsApp</span>
+                        </button>
+                        <button class="type-btn" data-type="instagram">
+                            <div class="social-icon" style="background: #e4405f;"><ion-icon name="logo-instagram"></ion-icon></div>
+                            <span>Instagram</span>
+                        </button>
+                        <button class="type-btn" data-type="facebook">
+                            <div class="social-icon" style="background: #1877f2;"><ion-icon name="logo-facebook"></ion-icon></div>
+                            <span>Facebook</span>
+                        </button>
+                        <button class="type-btn" data-type="twitter">
+                            <div class="social-icon" style="background: #000;"><ion-icon name="logo-twitter"></ion-icon></div>
+                            <span>Twitter/X</span>
+                        </button>
+                        <button class="type-btn" data-type="linkedin">
+                            <div class="social-icon" style="background: #0a66c2;"><ion-icon name="logo-linkedin"></ion-icon></div>
+                            <span>LinkedIn</span>
+                        </button>
+                        <button class="type-btn" data-type="youtube">
+                            <div class="social-icon" style="background: #ff0000;"><ion-icon name="logo-youtube"></ion-icon></div>
+                            <span>YouTube</span>
+                        </button>
+                        <button class="type-btn" data-type="tiktok">
+                            <div class="social-icon" style="background: #000;"><ion-icon name="logo-tiktok"></ion-icon></div>
+                            <span>TikTok</span>
+                        </button>
+                        <button class="type-btn" data-type="telegram">
+                            <div class="social-icon" style="background: #0088cc;"><ion-icon name="paper-plane-outline"></ion-icon></div>
+                            <span>Telegram</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- WhatsApp Configuration -->
+                <div id="whatsappConfig" class="whatsapp-config hidden">
+                    <h3>Configuración de WhatsApp</h3>
+                    <div class="form-group">
+                        <label class="form-label">Número de teléfono</label>
+                        <input type="tel" id="whatsappNumber" class="input-field" placeholder="Selecciona el país y escribe el número">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mensaje predefinido (opcional)</label>
+                        <textarea id="whatsappMessage" class="textarea-field" rows="2" placeholder="Hola, me interesa..."></textarea>
+                    </div>
+                </div>
+
+                <!-- Phone Configuration -->
+                <div id="phoneConfig" class="whatsapp-config hidden">
+                    <h3>Configuración de Teléfono</h3>
+                    <div class="form-group">
+                        <label class="form-label">Número de teléfono</label>
+                        <input type="tel" id="phoneNumber" class="input-field" placeholder="Selecciona el país y escribe el número">
+                    </div>
+                </div>
+
+                <!-- SMS Configuration -->
+                <div id="smsConfig" class="whatsapp-config hidden">
+                    <h3>Configuración de SMS</h3>
+                    <div class="form-group">
+                        <label class="form-label">Número de teléfono</label>
+                        <input type="tel" id="smsNumber" class="input-field" placeholder="Selecciona el país y escribe el número">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mensaje</label>
+                        <textarea id="smsMessage" class="textarea-field" rows="2" placeholder="Hola"></textarea>
+                    </div>
+                </div>
+
+                <!-- Content -->
+                <div class="form-group">
+                    <label class="form-label" id="contentLabel">Contenido del QR</label>
+                    <textarea id="qrContent" class="textarea-field" rows="3" placeholder="Ingresa el contenido para tu código QR">https://example.com</textarea>
+                </div>
+
+                <!-- Color Presets -->
+                <div class="form-group">
+                    <label class="form-label">Esquemas de color</label>
+                    <div class="preset-colors">
+                        <button class="preset-btn" data-fg="#000000" data-bg="#FFFFFF">
+                            <div class="preset-preview" style="background: #FFFFFF;">
+                                <div class="dot" style="background: #000000;"></div>
+                            </div>
+                            <span>Clásico</span>
+                        </button>
+                        <button class="preset-btn" data-fg="#1E40AF" data-bg="#EFF6FF">
+                            <div class="preset-preview" style="background: #EFF6FF;">
+                                <div class="dot" style="background: #1E40AF;"></div>
+                            </div>
+                            <span>Azul</span>
+                        </button>
+                        <button class="preset-btn" data-fg="#059669" data-bg="#ECFDF5">
+                            <div class="preset-preview" style="background: #ECFDF5;">
+                                <div class="dot" style="background: #059669;"></div>
+                            </div>
+                            <span>Verde</span>
+                        </button>
+                        <button class="preset-btn" data-fg="#DC2626" data-bg="#FEF2F2">
+                            <div class="preset-preview" style="background: #FEF2F2;">
+                                <div class="dot" style="background: #DC2626;"></div>
+                            </div>
+                            <span>Rojo</span>
+                        </button>
+                        <button class="preset-btn" data-fg="#7C3AED" data-bg="#F3E8FF">
+                            <div class="preset-preview" style="background: #F3E8FF;">
+                                <div class="dot" style="background: #7C3AED;"></div>
+                            </div>
+                            <span>Morado</span>
+                        </button>
+                        <button class="preset-btn" data-fg="#EA580C" data-bg="#FFF7ED">
+                            <div class="preset-preview" style="background: #FFF7ED;">
+                                <div class="dot" style="background: #EA580C;"></div>
+                            </div>
+                            <span>Naranja</span>
+                        </button>
+                        <button class="preset-btn" data-fg="#DB2777" data-bg="#FDF2F8">
+                            <div class="preset-preview" style="background: #FDF2F8;">
+                                <div class="dot" style="background: #DB2777;"></div>
+                            </div>
+                            <span>Rosa</span>
+                        </button>
+                        <button class="preset-btn" data-fg="#D97706" data-bg="#FFFBEB">
+                            <div class="preset-preview" style="background: #FFFBEB;">
+                                <div class="dot" style="background: #D97706;"></div>
+                            </div>
+                            <span>Amarillo</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Custom Colors -->
+                <div class="btn-grid btn-grid-2">
+                    <div class="form-group">
+                        <label class="form-label">Color del código</label>
+                        <div class="color-input-group">
+                            <input type="color" id="foregroundColor" class="color-picker" value="#000000">
+                            <input type="text" id="foregroundText" class="input-field color-text" value="#000000">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Color de fondo</label>
+                        <div class="color-input-group">
+                            <input type="color" id="backgroundColor" class="color-picker" value="#FFFFFF">
+                            <input type="text" id="backgroundText" class="input-field color-text" value="#FFFFFF">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Size -->
+                <div class="form-group">
+                    <label class="form-label">Tamaño: <span id="sizeValue">256</span>x<span id="sizeValue2">256</span> píxeles</label>
+                    <input type="range" id="sizeRange" class="range-input" min="128" max="512" step="32" value="256">
+                    <div class="range-labels">
+                        <span>128px</span>
+                        <span>320px</span>
+                        <span>512px</span>
+                    </div>
+                </div>
+
+                <!-- Error Level -->
+                <div class="form-group">
+                    <label class="form-label">Corrección de errores</label>
+                    <select id="errorLevel" class="select-field">
+                        <option value="L">Bajo (~7%) - Más datos</option>
+                        <option value="M" selected>Medio (~15%) - Balanceado</option>
+                        <option value="Q">Cuartil (~25%) - Resistente</option>
+                        <option value="H">Alto (~30%) - Máxima resistencia</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Preview Panel -->
+            <div class="card">
+                <h2>Vista previa</h2>
+                <div class="preview-section">
+                    <div class="canvas-container">
+                        <canvas id="qrCanvas"></canvas>
+                    </div>
+
+                    <div class="download-section">
+                        <!-- Main Download Button -->
+                        <button class="btn btn-primary" onclick="downloadQR('png')">
+                            <ion-icon class="inline-icon" name="download-outline"></ion-icon>Descargar PNG
+                        </button>
+
+                        <!-- Format Options -->
+                        <div class="format-grid">
+                            <button class="btn btn-small btn-orange" onclick="downloadQR('jpg', 0.9)">
+                                <ion-icon class="inline-icon" name="download-outline"></ion-icon>JPG
+                            </button>
+                            <button class="btn btn-small btn-green" onclick="downloadQR('webp', 0.9)">
+                                <ion-icon class="inline-icon" name="download-outline"></ion-icon>WebP
+                            </button>
+                            <button class="btn btn-small btn-purple" onclick="downloadQR('svg')">
+                                <ion-icon class="inline-icon" name="download-outline"></ion-icon>SVG
+                            </button>
+                            <button class="btn btn-small btn-red" onclick="downloadQR('pdf')">
+                                <ion-icon class="inline-icon" name="download-outline"></ion-icon>PDF
+                            </button>
+                        </div>
+
+                        <!-- Quality Options -->
+                        <div class="quality-section">
+                            <label class="form-label" style="margin-bottom: 8px; font-size: 0.8rem;">Calidad JPG/WebP</label>
+                            <div class="quality-grid">
+                                <button class="quality-btn quality-basic" onclick="downloadQR('jpg', 0.7)">Básica</button>
+                                <button class="quality-btn quality-high" onclick="downloadQR('jpg', 0.9)">Alta</button>
+                                <button class="quality-btn quality-max" onclick="downloadQR('jpg', 1.0)">Máxima</button>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-secondary" onclick="copyContent()">
+                            <ion-icon class="inline-icon" name="copy-outline"></ion-icon>Copiar contenido
+                        </button>
+                    </div>
+
+                    <!-- QR Info -->
+                    <div class="qr-info">
+                        <h3>Información del QR</h3>
+                        <div class="info-box">
+                            <p><strong>Tipo:</strong> <span id="infoType">URL/Enlace</span></p>
+                            <p><strong>Tamaño:</strong> <span id="infoSize">256x256px</span></p>
+                            <p><strong>Corrección:</strong> Nivel <span id="infoError">M</span></p>
+                            <p><strong>Caracteres:</strong> <span id="infoChars">19</span></p>
+                            <p><strong>Historial:</strong> <span id="infoHistory">0</span> guardados</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guide Section -->
+        <div class="guide-section">
+            <h3 style="font-size: 1.25rem; color: #1f2937; margin-bottom: 10px;">🚀 Guía completa de uso</h3>
+            <div class="guide-grid">
+                <div class="guide-item">
+                    <h4>💬 Redes Sociales</h4>
+                    <p><strong>WhatsApp:</strong> Agrega número con código país (+52, +1, etc.)</p>
+                    <p><strong>Instagram:</strong> instagram.com/tu_usuario</p>
+                    <p><strong>Facebook:</strong> facebook.com/tu_perfil</p>
+                    <p><strong>LinkedIn:</strong> linkedin.com/in/tu_perfil</p>
+                </div>
+                
+                <div class="guide-item">
+                    <h4>📱 Contacto Directo</h4>
+                    <p><strong>Email:</strong> mailto:tu@email.com</p>
+                    <p><strong>Teléfono:</strong> tel:+1234567890</p>
+                    <p><strong>SMS:</strong> sms:+123456?body=mensaje</p>
+                    <p><strong>Telegram:</strong> t.me/tu_usuario</p>
+                </div>
+
+                <div class="guide-item">
+                    <h4><ion-icon class="inline-icon" name="folder-outline"></ion-icon>Formatos de Descarga</h4>
+                    <p><strong>PNG:</strong> Mejor calidad, sin pérdida</p>
+                    <p><strong>JPG:</strong> Menor tamaño, 3 niveles de calidad</p>
+                    <p><strong>WebP:</strong> Formato moderno, excelente compresión</p>
+                    <p><strong>SVG:</strong> Vector escalable, ideal para impresión</p>
+                    <p><strong>PDF:</strong> Documento listo para imprimir</p>
+                </div>
+
+                <div class="guide-item">
+                    <h4><ion-icon class="inline-icon" name="construct-outline"></ion-icon>Funciones Avanzadas</h4>
+                    <p><strong>Historial:</strong> Guarda automáticamente al descargar</p>
+                    <p><strong>WiFi:</strong> WIFI:T:WPA;S:nombre;P:clave;;</p>
+                    <p><strong>Colores:</strong> 8 presets + personalización completa</p>
+                    <p><strong>Tamaños:</strong> 128px a 512px optimizados para web</p>
+                    <p><strong>Calidad:</strong> Control de compresión JPG/WebP</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let currentType = 'url';
+        let qrHistory = [];
+        let canvas, ctx;
+        let whatsappIti, phoneIti, smsIti;
+
+        // Inicializar la aplicación
+        document.addEventListener('DOMContentLoaded', function() {
+            canvas = document.getElementById('qrCanvas');
+            ctx = canvas.getContext('2d');
+
+            whatsappIti = window.intlTelInput(document.querySelector('#whatsappNumber'), {
+                separateDialCode: true,
+                utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js'
+            });
+            phoneIti = window.intlTelInput(document.querySelector('#phoneNumber'), {
+                separateDialCode: true,
+                utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js'
+            });
+            smsIti = window.intlTelInput(document.querySelector('#smsNumber'), {
+                separateDialCode: true,
+                utilsScript: 'https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js'
+            });
+
+            initializeEventListeners();
+            generateQR();
+            updateInfo();
+        });
+
+        // Event Listeners
+        function initializeEventListeners() {
+            // Type buttons
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentType = this.dataset.type;
+                    handleTypeChange(currentType);
+                });
+            });
+
+            // Color presets
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const fg = this.dataset.fg;
+                    const bg = this.dataset.bg;
+                    document.getElementById('foregroundColor').value = fg;
+                    document.getElementById('backgroundColor').value = bg;
+                    document.getElementById('foregroundText').value = fg;
+                    document.getElementById('backgroundText').value = bg;
+                    generateQR();
+                });
+            });
+
+            // Color inputs
+            ['foregroundColor', 'backgroundColor'].forEach(id => {
+                document.getElementById(id).addEventListener('change', function() {
+                    document.getElementById(id.replace('Color', 'Text')).value = this.value;
+                    generateQR();
+                });
+            });
+
+            ['foregroundText', 'backgroundText'].forEach(id => {
+                document.getElementById(id).addEventListener('input', function() {
+                    if (this.value.match(/^#[0-9A-F]{6}$/i)) {
+                        document.getElementById(id.replace('Text', 'Color')).value = this.value;
+                        generateQR();
+                    }
+                });
+            });
+
+            // Content textarea
+            document.getElementById('qrContent').addEventListener('input', function() {
+                generateQR();
+                updateInfo();
+            });
+
+            // Size range
+            document.getElementById('sizeRange').addEventListener('input', function() {
+                document.getElementById('sizeValue').textContent = this.value;
+                document.getElementById('sizeValue2').textContent = this.value;
+                generateQR();
+                updateInfo();
+            });
+
+            // Error level
+            document.getElementById('errorLevel').addEventListener('change', function() {
+                generateQR();
+                updateInfo();
+            });
+
+            // WhatsApp inputs
+            const whatsappNumberInput = document.getElementById('whatsappNumber');
+            whatsappNumberInput.addEventListener('input', updateWhatsAppLink);
+            whatsappNumberInput.addEventListener('countrychange', updateWhatsAppLink);
+            document.getElementById('whatsappMessage').addEventListener('input', updateWhatsAppLink);
+
+            // Phone inputs
+            const phoneNumberInput = document.getElementById('phoneNumber');
+            phoneNumberInput.addEventListener('input', updatePhoneLink);
+            phoneNumberInput.addEventListener('countrychange', updatePhoneLink);
+
+            // SMS inputs
+            const smsNumberInput = document.getElementById('smsNumber');
+            smsNumberInput.addEventListener('input', updateSmsLink);
+            smsNumberInput.addEventListener('countrychange', updateSmsLink);
+            document.getElementById('smsMessage').addEventListener('input', updateSmsLink);
+        }
+
+        // Handle type change
+        function handleTypeChange(type) {
+            const content = document.getElementById('qrContent');
+            const whatsappConfig = document.getElementById('whatsappConfig');
+            const phoneConfig = document.getElementById('phoneConfig');
+            const smsConfig = document.getElementById('smsConfig');
+            const contentLabel = document.getElementById('contentLabel');
+
+            // Hide configs by default
+            whatsappConfig.classList.add('hidden');
+            phoneConfig.classList.add('hidden');
+            smsConfig.classList.add('hidden');
+            content.readOnly = false;
+            content.style.background = '';
+            contentLabel.textContent = 'Contenido del QR';
+
+            switch (type) {
+                case 'url':
+                    content.value = 'https://example.com';
+                    break;
+                case 'text':
+                    content.value = 'Hola mundo';
+                    break;
+                case 'email':
+                    content.value = 'mailto:ejemplo@email.com';
+                    break;
+                case 'phone':
+                    phoneConfig.classList.remove('hidden');
+                    content.readOnly = true;
+                    content.style.background = '#f9fafb';
+                    contentLabel.textContent = 'Vista previa del enlace';
+                    content.value = 'tel:';
+                    phoneIti.setNumber('');
+                    break;
+                case 'sms':
+                    smsConfig.classList.remove('hidden');
+                    content.readOnly = true;
+                    content.style.background = '#f9fafb';
+                    contentLabel.textContent = 'Vista previa del enlace';
+                    content.value = 'sms:';
+                    smsIti.setNumber('');
+                    document.getElementById('smsMessage').value = '';
+                    break;
+                case 'wifi':
+                    content.value = 'WIFI:T:WPA;S:MiWiFi;P:mipassword;;';
+                    break;
+                case 'whatsapp':
+                    whatsappConfig.classList.remove('hidden');
+                    content.readOnly = true;
+                    content.style.background = '#f9fafb';
+                    contentLabel.textContent = 'Vista previa del enlace';
+                    content.value = 'https://wa.me/';
+                    whatsappIti.setNumber('');
+                    document.getElementById('whatsappMessage').value = '';
+                    break;
+                case 'instagram':
+                    content.value = 'https://instagram.com/usuario';
+                    break;
+                case 'facebook':
+                    content.value = 'https://facebook.com/usuario';
+                    break;
+                case 'twitter':
+                    content.value = 'https://twitter.com/usuario';
+                    break;
+                case 'linkedin':
+                    content.value = 'https://linkedin.com/in/usuario';
+                    break;
+                case 'youtube':
+                    content.value = 'https://youtube.com/@canal';
+                    break;
+                case 'tiktok':
+                    content.value = 'https://tiktok.com/@usuario';
+                    break;
+                case 'telegram':
+                    content.value = 'https://t.me/usuario';
+                    break;
+            }
+
+            generateQR();
+            updateInfo();
+        }
+
+        // Update WhatsApp link
+        function updateWhatsAppLink() {
+            if (currentType === 'whatsapp') {
+                const message = document.getElementById('whatsappMessage').value;
+                const number = whatsappIti.getNumber().replace(/\D/g, '');
+                const dialCode = whatsappIti.getSelectedCountryData().dialCode;
+
+                let link = 'https://wa.me/';
+                if (number.length > dialCode.length) {
+                    link += number;
+                    if (message) {
+                        link += '?text=' + encodeURIComponent(message);
+                    }
+                }
+                document.getElementById('qrContent').value = link;
+                generateQR();
+                updateInfo();
+            }
+        }
+
+        function updatePhoneLink() {
+            if (currentType === 'phone') {
+                const number = phoneIti.getNumber();
+                const dialCode = phoneIti.getSelectedCountryData().dialCode;
+                let link = 'tel:';
+                if (number.replace(/\D/g, '').length > dialCode.length) {
+                    link += number;
+                }
+                document.getElementById('qrContent').value = link;
+                generateQR();
+                updateInfo();
+            }
+        }
+
+        function updateSmsLink() {
+            if (currentType === 'sms') {
+                const number = smsIti.getNumber();
+                const dialCode = smsIti.getSelectedCountryData().dialCode;
+                const message = document.getElementById('smsMessage').value;
+                let link = 'sms:';
+                if (number.replace(/\D/g, '').length > dialCode.length) {
+                    link += number;
+                    if (message) {
+                        link += '?body=' + encodeURIComponent(message);
+                    }
+                } else if (message) {
+                    link += '?body=' + encodeURIComponent(message);
+                }
+                document.getElementById('qrContent').value = link;
+                generateQR();
+                updateInfo();
+            }
+        }
+
+        // Generate and draw QR using external API
+        function generateQR() {
+            const content = document.getElementById('qrContent').value;
+            const size = parseInt(document.getElementById('sizeRange').value);
+            const fgColor = document.getElementById('foregroundColor').value.replace('#', '');
+            const bgColor = document.getElementById('backgroundColor').value.replace('#', '');
+            const errorLevel = document.getElementById('errorLevel').value;
+
+            const apiUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(content)}&size=${size}x${size}&color=${fgColor}&bgcolor=${bgColor}&ecc=${errorLevel}`;
+
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+                canvas.width = size;
+                canvas.height = size;
+                ctx.drawImage(img, 0, 0, size, size);
+            };
+            img.src = apiUrl;
+        }
+
+        // Get QR type label
+        function getQRTypeLabel(type) {
+            const labels = {
+                url: 'URL/Enlace',
+                text: 'Texto',
+                email: 'Email',
+                phone: 'Teléfono',
+                sms: 'SMS',
+                wifi: 'WiFi',
+                whatsapp: 'WhatsApp',
+                instagram: 'Instagram',
+                facebook: 'Facebook',
+                twitter: 'Twitter/X',
+                linkedin: 'LinkedIn',
+                youtube: 'YouTube',
+                tiktok: 'TikTok',
+                telegram: 'Telegram'
+            };
+            return labels[type] || type;
+        }
+
+        // Update info panel
+        function updateInfo() {
+            const content = document.getElementById('qrContent').value;
+            const size = document.getElementById('sizeRange').value;
+            const errorLevel = document.getElementById('errorLevel').value;
+
+            document.getElementById('infoType').textContent = getQRTypeLabel(currentType);
+            document.getElementById('infoSize').textContent = `${size}x${size}px`;
+            document.getElementById('infoError').textContent = errorLevel;
+            document.getElementById('infoChars').textContent = content.length;
+            document.getElementById('infoHistory').textContent = qrHistory.length;
+        }
+
+        // Download QR in different formats
+        function downloadQR(format = 'png', quality = 0.9) {
+            const timestamp = Date.now();
+            let dataUrl, filename;
+
+            switch (format) {
+                case 'png':
+                    dataUrl = canvas.toDataURL('image/png');
+                    filename = `qr-${currentType}-${timestamp}.png`;
+                    break;
+                case 'jpg':
+                case 'jpeg':
+                    dataUrl = canvas.toDataURL('image/jpeg', quality);
+                    filename = `qr-${currentType}-${timestamp}.jpg`;
+                    break;
+                case 'webp':
+                    dataUrl = canvas.toDataURL('image/webp', quality);
+                    filename = `qr-${currentType}-${timestamp}.webp`;
+                    break;
+
+                case 'svg':
+                    const fg = document.getElementById('foregroundColor').value.replace('#', '');
+                    const bg = document.getElementById('backgroundColor').value.replace('#', '');
+                    const content = document.getElementById('qrContent').value;
+                    const size = document.getElementById('sizeRange').value;
+                    const ecc = document.getElementById('errorLevel').value;
+                    const svgUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(content)}&size=${size}x${size}&color=${fg}&bgcolor=${bg}&ecc=${ecc}&format=svg`;
+                    fetch(svgUrl)
+                        .then(response => response.blob())
+                        .then(blob => {
+                            const url = URL.createObjectURL(blob);
+                            const link = document.createElement('a');
+                            link.download = `qr-${currentType}-${timestamp}.svg`;
+                            link.href = url;
+                            link.click();
+                            URL.revokeObjectURL(url);
+                            saveToHistory();
+                        });
+                    return;
+                case 'pdf':
+                    // Create PDF-like canvas
+                    const pdfCanvas = document.createElement('canvas');
+                    const pdfCtx = pdfCanvas.getContext('2d');
+                    const pdfSize = 595; // A4 size in points
+                    pdfCanvas.width = pdfSize;
+                    pdfCanvas.height = pdfSize;
+                    
+                    // White background
+                    pdfCtx.fillStyle = '#FFFFFF';
+                    pdfCtx.fillRect(0, 0, pdfSize, pdfSize);
+                    
+                    // Center QR
+                    const qrSize = 300;
+                    const x = (pdfSize - qrSize) / 2;
+                    const y = (pdfSize - qrSize) / 2;
+                    
+                    pdfCtx.drawImage(canvas, x, y, qrSize, qrSize);
+                    
+                    // Add text
+                    pdfCtx.fillStyle = '#000000';
+                    pdfCtx.font = '16px Arial';
+                    pdfCtx.textAlign = 'center';
+                    pdfCtx.fillText(`Código QR - ${getQRTypeLabel(currentType)}`, pdfSize/2, y - 30);
+                    pdfCtx.font = '12px Arial';
+                    pdfCtx.fillText(new Date().toLocaleDateString(), pdfSize/2, y + qrSize + 30);
+                    
+                    dataUrl = pdfCanvas.toDataURL('image/png');
+                    filename = `qr-${currentType}-${timestamp}.png`;
+                    break;
+                default:
+                    dataUrl = canvas.toDataURL('image/png');
+                    filename = `qr-${currentType}-${timestamp}.png`;
+            }
+
+            // Download
+            const link = document.createElement('a');
+            link.download = filename;
+            link.href = dataUrl;
+            link.click();
+
+            // Save to history
+            saveToHistory();
+        }
+
+        // Save QR to history
+        function saveToHistory() {
+            const newQR = {
+                id: Date.now(),
+                type: currentType,
+                content: document.getElementById('qrContent').value,
+                foregroundColor: document.getElementById('foregroundColor').value,
+                backgroundColor: document.getElementById('backgroundColor').value,
+                size: parseInt(document.getElementById('sizeRange').value),
+                errorLevel: document.getElementById('errorLevel').value,
+                createdAt: new Date().toLocaleString(),
+                preview: canvas.toDataURL()
+            };
+
+            qrHistory.unshift(newQR);
+            qrHistory = qrHistory.slice(0, 20); // Keep only last 20
+
+            updateHistoryDisplay();
+            updateInfo();
+        }
+
+        // Update history display
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            const historyCount = document.getElementById('historyCount');
+            
+            historyCount.textContent = qrHistory.length;
+
+            if (qrHistory.length === 0) {
+                historyList.innerHTML = '<p style="text-align: center; color: #6b7280; padding: 20px;">No hay QR guardados aún</p>';
+                return;
+            }
+
+            historyList.innerHTML = qrHistory.map(item => `
+                <div class="history-item">
+                    <img src="${item.preview}" alt="QR Preview" class="history-preview">
+                    <div class="history-content">
+                        <p class="history-title">${getQRTypeLabel(item.type)}</p>
+                        <p class="history-text">${item.content.length > 40 ? item.content.substring(0, 40) + '...' : item.content}</p>
+                        <p class="history-date">${item.createdAt}</p>
+                    </div>
+                    <div class="history-actions">
+                        <button class="action-btn" onclick="loadFromHistory(${item.id})" title="Cargar"><ion-icon name="eye-outline"></ion-icon></button>
+                        <button class="action-btn" onclick="copyToClipboard('${item.content.replace(/'/g, "\\'")}')" title="Copiar"><ion-icon name="copy-outline"></ion-icon></button>
+                        <button class="action-btn" onclick="deleteFromHistory(${item.id})" title="Eliminar"><ion-icon name="trash-outline"></ion-icon></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Load QR from history
+        function loadFromHistory(id) {
+            const item = qrHistory.find(h => h.id === id);
+            if (!item) return;
+
+            // Set type
+            currentType = item.type;
+            document.querySelectorAll('.type-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.type === item.type);
+            });
+
+            // Set content
+            document.getElementById('qrContent').value = item.content;
+
+            // Set colors
+            document.getElementById('foregroundColor').value = item.foregroundColor;
+            document.getElementById('backgroundColor').value = item.backgroundColor;
+            document.getElementById('foregroundText').value = item.foregroundColor;
+            document.getElementById('backgroundText').value = item.backgroundColor;
+
+            // Set size
+            document.getElementById('sizeRange').value = item.size;
+            document.getElementById('sizeValue').textContent = item.size;
+            document.getElementById('sizeValue2').textContent = item.size;
+
+            // Set error level
+            document.getElementById('errorLevel').value = item.errorLevel;
+
+            // Handle WhatsApp
+            if (item.type === 'whatsapp' && item.content.includes('wa.me/')) {
+                try {
+                    const url = new URL(item.content);
+                    const pathParts = url.pathname.split('/');
+                    if (pathParts.length > 1) {
+                        whatsappIti.setNumber('+' + pathParts[1]);
+                    }
+                    const message = url.searchParams.get('text');
+                    if (message) {
+                        document.getElementById('whatsappMessage').value = message;
+                    }
+                } catch (e) {
+                    console.error('Error parsing WhatsApp URL:', e);
+                }
+            }
+
+            if (item.type === 'phone' && item.content.startsWith('tel:')) {
+                const number = item.content.replace('tel:', '');
+                phoneIti.setNumber(number);
+            }
+
+            if (item.type === 'sms' && item.content.startsWith('sms:')) {
+                const smsParts = item.content.substring(4).split('?body=');
+                if (smsParts[0]) {
+                    smsIti.setNumber(smsParts[0]);
+                }
+                if (smsParts[1]) {
+                    document.getElementById('smsMessage').value = decodeURIComponent(smsParts[1]);
+                }
+            }
+
+            // Update UI
+            handleTypeChange(item.type);
+            generateQR();
+            updateInfo();
+            toggleHistory(); // Hide history
+        }
+
+        // Delete from history
+        function deleteFromHistory(id) {
+            qrHistory = qrHistory.filter(item => item.id !== id);
+            updateHistoryDisplay();
+        }
+
+        // Clear history
+        function clearHistory() {
+            if (confirm('¿Estás seguro de que quieres eliminar todo el historial?')) {
+                qrHistory = [];
+                updateHistoryDisplay();
+            }
+        }
+
+        // Toggle history visibility
+        function toggleHistory() {
+            const historySection = document.getElementById('historySection');
+            historySection.classList.toggle('hidden');
+        }
+
+        // Copy content to clipboard
+        function copyContent() {
+            const content = document.getElementById('qrContent').value;
+            copyToClipboard(content);
+        }
+
+        // Copy to clipboard utility
+        function copyToClipboard(text) {
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('Contenido copiado al portapapeles');
+                }).catch(() => {
+                    fallbackCopyTextToClipboard(text);
+                });
+            } else {
+                fallbackCopyTextToClipboard(text);
+            }
+        }
+
+        // Fallback copy method
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.top = '0';
+            textArea.style.left = '0';
+            textArea.style.position = 'fixed';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                alert('Contenido copiado al portapapeles');
+            } catch (err) {
+                alert('Error al copiar al portapapeles');
+            }
+
+            document.body.removeChild(textArea);
+        }
+    </script>
+</body>
+</html>
