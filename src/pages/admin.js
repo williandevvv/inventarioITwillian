@@ -48,7 +48,7 @@ export const renderAdmin = ({ state }) => {
               </select>
               <input name="code" placeholder="Código interno" />
               <textarea name="description" placeholder="Descripción"></textarea>
-              <input name="photo" placeholder="URL de foto (Firebase Storage)" />
+              <input type="file" name="photo" accept="image/*" />
               <div class="form-actions">
                 <button class="button" type="submit">Guardar herramienta</button>
               </div>

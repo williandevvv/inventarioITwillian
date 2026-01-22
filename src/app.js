@@ -153,6 +153,18 @@ const setView = (view) => {
   setState({ view });
 };
 
+const readFileAsDataUrl = (file) =>
+  new Promise((resolve, reject) => {
+    if (!file) {
+      resolve("");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+
 const getContext = () => ({
   state,
   actions: {
@@ -444,13 +456,16 @@ const bindUIEvents = () => {
     }
   });
 
-  document.addEventListener("submit", (event) => {
+  document.addEventListener("submit", async (event) => {
     const form = event.target;
     if (form.matches("#tool-form")) {
       event.preventDefault();
       const formData = new FormData(form);
+      const photoFile = formData.get("photo");
       const locationId = formData.get("location_id");
       const location = state.locations.find((loc) => loc.id === locationId);
+      const photoUrl =
+        photoFile instanceof File && photoFile.size > 0 ? await readFileAsDataUrl(photoFile) : "";
       const tool = {
         id: crypto.randomUUID(),
         name: formData.get("name"),
@@ -465,7 +480,7 @@ const bindUIEvents = () => {
         status: formData.get("status"),
         location_id: locationId,
         location_name_cache: location?.name || "",
-        photos: formData.get("photo") ? [formData.get("photo")] : [],
+        photos: photoUrl ? [photoUrl] : [],
         code: formData.get("code"),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
