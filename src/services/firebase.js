@@ -1,10 +1,10 @@
 export const firebaseConfig = {
-  apiKey: "TU_API_KEY",
-  authDomain: "TU_AUTH_DOMAIN",
-  projectId: "TU_PROJECT_ID",
-  storageBucket: "TU_STORAGE_BUCKET",
-  messagingSenderId: "TU_SENDER_ID",
-  appId: "TU_APP_ID"
+  apiKey: "AIzaSyC2t_EZA4fVtM4qyzxa0F4Aof0Ew_LlBHw",
+  authDomain: "inventarioitwillian.firebaseapp.com",
+  projectId: "inventarioitwillian",
+  storageBucket: "inventarioitwillian.firebasestorage.app",
+  messagingSenderId: "160665865470",
+  appId: "1:160665865470:web:3952ebffaf7dabaf8de9af"
 };
 
 export const firebaseRoles = {
