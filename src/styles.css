@@ -186,6 +186,11 @@ textarea {
   color: var(--text);
 }
 
+.button.ghost.danger {
+  border-color: rgba(239, 68, 68, 0.6);
+  color: var(--danger);
+}
+
 .button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
@@ -254,6 +259,34 @@ textarea {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
+}
+
+.table-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.photo-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.photo-preview img {
+  width: 120px;
+  height: 80px;
+  border-radius: 10px;
+  object-fit: cover;
+  border: 1px solid var(--border);
+}
+
+.checkbox {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  color: var(--muted);
 }
 
 .table {

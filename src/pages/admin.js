@@ -56,6 +56,41 @@ export const renderAdmin = ({ state }) => {
           </div>
 
           <div class="panel">
+            <h3 class="section-title">Artículos registrados</h3>
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Categoría</th>
+                  <th>Stock</th>
+                  <th>Ubicación</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${state.tools.length
+                  ? state.tools
+                      .map(
+                        (tool) => `
+                    <tr>
+                      <td>${tool.name}</td>
+                      <td>${tool.category}</td>
+                      <td>${tool.qty_available} / ${tool.qty_total}</td>
+                      <td>${tool.location_name_cache || "-"}</td>
+                      <td class="table-actions">
+                        <button class="button ghost" data-action="open-edit-tool" data-id="${tool.id}">Editar</button>
+                        <button class="button ghost danger" data-action="delete-tool" data-id="${tool.id}">Eliminar</button>
+                      </td>
+                    </tr>
+                  `
+                      )
+                      .join("")
+                  : `<tr><td colspan="5">No hay artículos registrados.</td></tr>`}
+              </tbody>
+            </table>
+          </div>
+
+          <div class="panel">
             <h3 class="section-title">Ubicaciones</h3>
             <form id="location-form" class="form-grid">
               <input name="name" placeholder="Nombre de ubicación" required />
