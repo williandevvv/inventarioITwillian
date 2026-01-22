@@ -15,17 +15,8 @@ export const renderLogin = ({ actions }) => {
           <input type="email" id="login-email" placeholder="usuario@empresa.com" />
         </label>
         <label>
-          Nombre
-          <input type="text" id="login-name" placeholder="Nombre completo" />
-        </label>
-        <label>
-          Rol
-          <select id="login-role">
-            <option value="operador">Operador</option>
-            <option value="admin">Admin</option>
-            <option value="superadmin">Superadmin</option>
-            <option value="lector">Lector</option>
-          </select>
+          Contraseña
+          <input type="password" id="login-password" placeholder="Ingresa tu contraseña" />
         </label>
         <button class="button" id="login-btn">Iniciar sesión</button>
         <span id="firebase-note" class="tag"></span>
@@ -35,13 +26,16 @@ export const renderLogin = ({ actions }) => {
       const button = document.querySelector('#login-btn');
       button?.addEventListener('click', () => {
         const email = document.querySelector('#login-email').value;
-        const name = document.querySelector('#login-name').value;
-        const role = document.querySelector('#login-role').value;
+        const password = document.querySelector('#login-password').value;
         if (!email) {
           alert('Por favor ingresa tu correo.');
           return;
         }
-        window.inventoryApp.handleLogin({ email, name, role });
+        if (!password) {
+          alert('Por favor ingresa tu contraseña.');
+          return;
+        }
+        window.inventoryApp.handleLogin({ email, password });
       });
     </script>
   `;
