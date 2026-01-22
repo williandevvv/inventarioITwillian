@@ -17,7 +17,7 @@ export const exportToolsPdf = async ({ tools, user, title }) => {
   }
 
   const doc = new jsPDF({
-    orientation: tools.length > 4 ? "landscape" : "portrait",
+    orientation: "portrait",
     unit: "pt",
     format: "letter"
   });

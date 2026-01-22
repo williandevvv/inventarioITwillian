@@ -19,9 +19,40 @@ const state = {
   }
 };
 
+const SESSION_STORAGE_KEY = "inventario-session";
+
 const setState = (partial) => {
   Object.assign(state, partial);
   render();
+};
+
+const persistSession = () => {
+  if (!state.user) {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+    return;
+  }
+  const safeView = ["inventory", "admin"].includes(state.view) ? state.view : "inventory";
+  localStorage.setItem(
+    SESSION_STORAGE_KEY,
+    JSON.stringify({
+      user: state.user,
+      view: safeView
+    })
+  );
+};
+
+const restoreSession = () => {
+  const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+  if (!raw) return;
+  try {
+    const data = JSON.parse(raw);
+    if (data?.user) {
+      const nextView = ["inventory", "admin"].includes(data.view) ? data.view : "inventory";
+      setState({ user: data.user, view: nextView });
+    }
+  } catch (error) {
+    localStorage.removeItem(SESSION_STORAGE_KEY);
+  }
 };
 
 const loadInitialData = () => {
@@ -73,11 +104,13 @@ const handleLogin = (payload) => {
     role: matchedUser.role
   };
   setState({ user, view: "inventory" });
+  persistSession();
   return { ok: true };
 };
 
 const handleLogout = () => {
   setState({ user: null, view: "login" });
+  persistSession();
 };
 
 const openToast = (message, variant = "info") => {
@@ -156,6 +189,7 @@ const setFilters = (filters) => {
 
 const setView = (view) => {
   setState({ view });
+  persistSession();
 };
 
 const readFileAsDataUrl = (file) =>
@@ -641,6 +675,7 @@ const bindUIEvents = () => {
 
 const init = () => {
   loadInitialData();
+  restoreSession();
   render();
   bindUIEvents();
   const note = document.querySelector("#firebase-note");
