@@ -89,6 +89,14 @@ const openToast = (message, variant = "info") => {
   setTimeout(() => toast.classList.remove("show"), 3000);
 };
 
+const updateLoginMessage = (text, variant = "error") => {
+  const message = document.querySelector("#login-message");
+  if (!message) return;
+  message.textContent = text;
+  message.dataset.variant = variant;
+  message.classList.toggle("show", Boolean(text));
+};
+
 const openModal = (content) => {
   const backdrop = document.querySelector("#modal-backdrop");
   const modalBody = document.querySelector("#modal-body");
@@ -481,6 +489,23 @@ const bindUIEvents = () => {
       form.reset();
       openToast("Ubicación agregada.");
       render();
+    }
+    if (form.matches("#login-form")) {
+      event.preventDefault();
+      const email = form.querySelector("#login-email")?.value.trim();
+      const password = form.querySelector("#login-password")?.value || "";
+      if (!email) {
+        updateLoginMessage("Por favor ingresa tu correo.");
+        return;
+      }
+      if (!password) {
+        updateLoginMessage("Por favor ingresa tu contraseña.");
+        return;
+      }
+      const result = handleLogin({ email, password });
+      if (!result?.ok) {
+        updateLoginMessage(result?.message || "No se pudo iniciar sesión.");
+      }
     }
   });
 };
