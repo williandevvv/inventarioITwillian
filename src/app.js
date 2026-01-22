@@ -141,6 +141,11 @@ const deleteLocation = (locationId) => {
   setState({ locations: dataService.getLocations() });
 };
 
+const deleteTool = (toolId) => {
+  dataService.deleteTool(toolId);
+  setState({ tools: dataService.getTools() });
+};
+
 const setSearch = (value) => {
   setState({ search: value });
 };
@@ -435,6 +440,77 @@ const bindUIEvents = () => {
       closeModal();
       render();
     }
+    if (action === "open-edit-tool") {
+      const tool = state.tools.find((item) => item.id === id);
+      if (tool) {
+        const locationOptions = state.locations
+          .map(
+            (loc) =>
+              `<option value="${loc.id}" ${loc.id === tool.location_id ? "selected" : ""}>${loc.name}</option>`
+          )
+          .join("");
+        const content = document.createElement("div");
+        content.innerHTML = `
+          <h3>Editar herramienta</h3>
+          <form id="tool-edit-form" class="form-grid">
+            <input type="hidden" name="tool_id" value="${tool.id}" />
+            <input name="name" placeholder="Nombre" value="${tool.name}" required />
+            <input name="category" placeholder="Categoría" value="${tool.category}" required />
+            <input name="brand" placeholder="Marca" value="${tool.brand || ""}" />
+            <input name="model" placeholder="Modelo" value="${tool.model || ""}" />
+            <input name="unit" placeholder="Unidad (pieza, caja, metro)" value="${tool.unit}" required />
+            <input type="number" name="qty_total" placeholder="Cantidad total" min="0" value="${tool.qty_total}" required />
+            <input type="number" name="qty_available" placeholder="Cantidad disponible" min="0" value="${tool.qty_available}" required />
+            <input type="number" name="min_qty" placeholder="Mínimo" min="0" value="${tool.min_qty || 0}" />
+            <select name="status">
+              <option value="disponible" ${tool.status === "disponible" ? "selected" : ""}>Disponible</option>
+              <option value="dañado" ${tool.status === "dañado" ? "selected" : ""}>Dañado</option>
+              <option value="en reparación" ${tool.status === "en reparación" ? "selected" : ""}>En reparación</option>
+            </select>
+            <select name="location_id" required>
+              <option value="">Ubicación</option>
+              ${locationOptions}
+            </select>
+            <input name="code" placeholder="Código interno" value="${tool.code || ""}" />
+            <textarea name="description" placeholder="Descripción">${tool.description || ""}</textarea>
+            <div class="photo-preview">
+              <img src="${tool.photos?.[0] || "https://via.placeholder.com/320x180?text=Sin+foto"}" alt="Foto actual de ${tool.name}" />
+              <label class="checkbox">
+                <input type="checkbox" name="remove_photo" />
+                Quitar foto actual
+              </label>
+            </div>
+            <input type="file" name="photo" accept="image/*" />
+            <div class="form-actions">
+              <button class="button ghost" data-action="close-modal" type="button">Cancelar</button>
+              <button class="button" type="submit">Guardar cambios</button>
+            </div>
+          </form>
+        `;
+        openModal(content);
+      }
+    }
+    if (action === "delete-tool") {
+      const tool = state.tools.find((item) => item.id === id);
+      if (tool) {
+        const content = document.createElement("div");
+        content.innerHTML = `
+          <h3>Eliminar herramienta</h3>
+          <p>¿Seguro que deseas eliminar <strong>${tool.name}</strong>?</p>
+          <div class="form-actions">
+            <button class="button ghost" data-action="close-modal">Cancelar</button>
+            <button class="button" data-action="confirm-delete-tool" data-id="${tool.id}">Eliminar</button>
+          </div>
+        `;
+        openModal(content);
+      }
+    }
+    if (action === "confirm-delete-tool") {
+      deleteTool(id);
+      openToast("Herramienta eliminada.");
+      closeModal();
+      render();
+    }
   });
 
   document.addEventListener("input", (event) => {
@@ -503,6 +579,44 @@ const bindUIEvents = () => {
       addLocation(location);
       form.reset();
       openToast("Ubicación agregada.");
+      render();
+    }
+    if (form.matches("#tool-edit-form")) {
+      event.preventDefault();
+      const formData = new FormData(form);
+      const toolId = formData.get("tool_id");
+      const tool = state.tools.find((item) => item.id === toolId);
+      if (!tool) return;
+
+      const photoFile = formData.get("photo");
+      const removePhoto = formData.get("remove_photo") === "on";
+      const newPhotoUrl =
+        photoFile instanceof File && photoFile.size > 0 ? await readFileAsDataUrl(photoFile) : "";
+      const locationId = formData.get("location_id");
+      const location = state.locations.find((loc) => loc.id === locationId);
+
+      const photos = removePhoto ? [] : newPhotoUrl ? [newPhotoUrl] : tool.photos || [];
+      const updatedTool = {
+        ...tool,
+        name: formData.get("name"),
+        category: formData.get("category"),
+        brand: formData.get("brand"),
+        model: formData.get("model"),
+        unit: formData.get("unit"),
+        qty_total: Number(formData.get("qty_total")),
+        qty_available: Number(formData.get("qty_available")),
+        min_qty: Number(formData.get("min_qty") || 0),
+        status: formData.get("status"),
+        location_id: locationId,
+        location_name_cache: location?.name || "",
+        code: formData.get("code"),
+        description: formData.get("description"),
+        photos,
+        updatedAt: new Date().toISOString()
+      };
+      updateTool(updatedTool);
+      openToast("Herramienta actualizada.");
+      closeModal();
       render();
     }
     if (form.matches("#login-form")) {

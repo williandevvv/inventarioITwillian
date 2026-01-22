@@ -142,5 +142,9 @@ export const dataService = {
   deleteLocation(locationId) {
     const state = getState();
     updateState({ locations: state.locations.filter((loc) => loc.id !== locationId) });
+  },
+  deleteTool(toolId) {
+    const state = getState();
+    updateState({ tools: state.tools.filter((tool) => tool.id !== toolId) });
   }
 };
