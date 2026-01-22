@@ -1,3 +1,5 @@
+import { saveToolToFirebase } from "./firebase.js";
+
 const STORAGE_KEY = "it_inventory_data_v1";
 
 const seedData = {
@@ -129,6 +131,9 @@ export const dataService = {
   addTool(tool) {
     const state = getState();
     updateState({ tools: [...state.tools, tool] });
+    saveToolToFirebase(tool).catch((error) => {
+      console.error("No se pudo guardar la herramienta en Firebase.", error);
+    });
   },
   addLocation(location) {
     const state = getState();
