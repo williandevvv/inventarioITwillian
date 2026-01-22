@@ -19,7 +19,7 @@ export const exportToolsPdf = async ({ tools, user, title }) => {
   const doc = new jsPDF({
     orientation: tools.length > 4 ? "landscape" : "portrait",
     unit: "pt",
-    format: "a4"
+    format: "letter"
   });
 
   doc.setFontSize(18);
@@ -44,8 +44,8 @@ export const exportToolsPdf = async ({ tools, user, title }) => {
   }
 
   const startY = 100;
-  const rowHeight = 70;
-  const colWidths = [80, 140, 100, 120, 80, 90, 110];
+  const rowHeight = 64;
+  const colWidths = [60, 120, 80, 90, 60, 70, 52];
   const headers = [
     "Foto",
     "Herramienta",
