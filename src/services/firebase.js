@@ -1,7 +1,10 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore,
+  collection,
+  deleteDoc,
   doc,
+  getFirestore,
+  onSnapshot,
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
@@ -17,6 +20,8 @@ export const firebaseConfig = {
 const firebaseApp = initializeApp(firebaseConfig);
 const firestoreDb = getFirestore(firebaseApp);
 
+export { collection, deleteDoc, doc, firestoreDb, onSnapshot, setDoc };
+
 export const saveToolToFirebase = async (tool) => {
   if (!tool?.id) return;
   await setDoc(doc(firestoreDb, "tools", tool.id), tool, { merge: true });
@@ -31,5 +36,5 @@ export const firebaseRoles = {
 
 export const firebaseNotes = {
   message:
-    "Configura Firebase en src/services/firebase.js y reemplaza las claves. Este demo usa LocalStorage para simular datos."
+    "Configura Firebase en src/services/firebase.js y reemplaza las claves. Este demo usa Firestore para compartir el inventario."
 };
