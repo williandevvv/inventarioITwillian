@@ -32,15 +32,48 @@ const loadInitialData = () => {
   });
 };
 
-const handleLogin = (payload) => {
-  const derivedName = payload.email?.split("@")[0] || "Operador";
-  const user = {
-    uid: "demo-1",
-    name: derivedName,
-    email: payload.email,
+const demoUsers = [
+  {
+    uid: "demo-admin",
+    name: "Administrador",
+    email: "admin@inventario.com",
+    password: "Admin123",
+    role: "admin"
+  },
+  {
+    uid: "demo-operator",
+    name: "Operador",
+    email: "operador@inventario.com",
+    password: "Operador123",
     role: "operador"
+  }
+];
+
+const handleLogin = (payload) => {
+  const email = payload.email?.trim().toLowerCase();
+  const password = payload.password ?? "";
+
+  if (!email || !password) {
+    return { ok: false, message: "Ingresa tu correo y contraseña." };
+  }
+
+  const matchedUser = demoUsers.find((item) => item.email === email);
+  if (!matchedUser) {
+    return { ok: false, message: "El correo no está registrado." };
+  }
+
+  if (matchedUser.password !== password) {
+    return { ok: false, message: "La contraseña es incorrecta." };
+  }
+
+  const user = {
+    uid: matchedUser.uid,
+    name: matchedUser.name,
+    email: matchedUser.email,
+    role: matchedUser.role
   };
   setState({ user, view: "inventory" });
+  return { ok: true };
 };
 
 const handleLogout = () => {
