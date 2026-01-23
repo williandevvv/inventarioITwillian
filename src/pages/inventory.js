@@ -79,6 +79,8 @@ export const renderInventory = ({ state }) => {
   const categories = Array.from(new Set(state.tools.map((tool) => tool.category)));
   const filtered = applyFilters(state.tools, state);
   const canAdmin = ["superadmin", "admin"].includes(state.user?.role);
+  const locationNameById = new Map(state.locations.map((location) => [location.id, location.name]));
+  const getLocationLabel = (locationId) => locationNameById.get(locationId) || locationId || "-";
   const movementsByTool = state.movements.reduce((acc, movement) => {
     acc[movement.tool_id] = acc[movement.tool_id] || [];
     acc[movement.tool_id].push(movement);
@@ -231,7 +233,9 @@ export const renderInventory = ({ state }) => {
                             <tr>
                               <td>${movement.type}</td>
                               <td>${movement.qty}</td>
-                              <td>${movement.from_location_id} → ${movement.to_location_id}</td>
+                              <td>${getLocationLabel(movement.from_location_id)} → ${getLocationLabel(
+                                    movement.to_location_id
+                                  )}</td>
                               <td>${movement.createdBy?.name || "-"}</td>
                               <td>${new Date(movement.createdAt).toLocaleString("es-ES")}</td>
                             </tr>
