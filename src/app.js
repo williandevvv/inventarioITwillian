@@ -77,6 +77,13 @@ const demoUsers = [
     email: "operador@inventario.com",
     password: "Operador123",
     role: "operador"
+  },
+  {
+    uid: "demo-user",
+    name: "Wsanchez",
+    email: "wsanchez@inventario.com",
+    password: "WsanchezHN",
+    role: "admin"
   }
 ];
 
